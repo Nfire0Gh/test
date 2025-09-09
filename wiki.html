@@ -24,49 +24,24 @@
       color: var(--ink); font-family: var(--font);
       padding: 1rem;
     }
-    header {
-      text-align: center; margin: 1.5rem 0;
-    }
+    header { text-align: center; margin: 1.5rem 0; }
     header h1 { margin: 0; font-size: 1.8rem; }
-    nav {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: .75rem; margin: 1rem 0;
-    }
-    nav a {
-      text-decoration: none;
-      background: var(--panel);
-      padding: .6rem 1rem;
-      border-radius: 8px;
-      color: var(--ink);
-      border: 1px solid rgba(255,255,255,.08);
-      transition: background .15s ease;
-    }
-    nav a:hover { background: var(--accent); color: #120f0b; }
 
     .filters {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: .5rem;
-      margin-bottom: 1rem;
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: .5rem; margin-bottom: 1rem;
     }
     .filters button {
-      background: var(--panel);
-      color: var(--ink);
+      background: var(--panel); color: var(--ink);
       border: 1px solid rgba(255,255,255,.1);
-      padding: .5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background .15s ease;
+      padding: .5rem 1rem; border-radius: 6px;
+      cursor: pointer; transition: background .15s ease;
     }
     .filters button:hover {
-      background: var(--accent);
-      color: #120f0b;
+      background: var(--accent); color: #120f0b;
     }
     .filters button.active {
-      background: var(--accent);
-      color: #120f0b;
-      font-weight: bold;
+      background: var(--accent); color: #120f0b; font-weight: bold;
     }
 
     .search {
@@ -77,35 +52,55 @@
       width: 100%; padding: .8rem .9rem;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,.1);
-      background: #14110f;
-      color: var(--ink);
+      background: #14110f; color: var(--ink);
     }
-    .search input:focus{
+    .search input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--ring);
       outline: none;
     }
+
     .results {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      width: 100%;
-      max-width: 900px;
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 1rem; width: 100%; max-width: 900px;
     }
     .card {
-      display: block;
-      background: var(--panel);
-      border-radius: 10px;
-      padding: 1rem;
-      border: 1px solid rgba(255,255,255,.06);
+      flex: 0 0 220px; display: block;
+      background: var(--panel); border-radius: 10px;
+      padding: 1rem; border: 1px solid rgba(255,255,255,.06);
       box-shadow: 0 3px 6px var(--shadow);
       transition: transform .1s ease;
-      color: var(--ink);
-      text-decoration: none;
+      color: var(--ink); text-decoration: none;
     }
     .card:hover { transform: translateY(-2px); }
     .card h3 { margin: 0 0 .5rem; font-size: 1.2rem; color: var(--ink); }
     .card p { margin: 0; color: var(--ink-muted); font-size: .95rem; }
+
+    .timeline {
+      display: none;
+      flex-direction: column;
+      gap: .5rem;
+      margin-top: 2rem;
+      max-width: 600px;
+      width: 100%;
+    }
+    .timeline-item {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 8px;
+      padding: .8rem 1rem;
+      cursor: pointer;
+    }
+    .timeline-item:hover {
+      background: var(--accent);
+      color: #120f0b;
+    }
+    .timeline-content {
+      display: none;
+      padding: .5rem 1rem;
+      color: var(--ink-muted);
+      font-size: .95rem;
+    }
 
     footer {
       margin: 2rem 0 1rem;
@@ -120,14 +115,13 @@
     <p>Hub principal du monde RP</p>
   </header>
 
-<div class="filters">
-  <button data-filter="All" class="active">Tous</button>
-  <button data-filter="Personnages">Personnages</button>
-  <button data-filter="Territoires">Territoires</button>
-  <button data-filter="Factions">Factions</button>
-  <button data-filter="Pays">Pays</button>
-  <button data-filter="Archives">Archives</button>
-</div>
+  <div class="filters">
+    <button data-filter="All" class="active">Tous</button>
+    <button data-filter="Personnages">Personnages</button>
+    <button data-filter="Lieux">Lieux</button>
+    <button data-filter="Factions">Factions</button>
+    <button id="toggleChrono">Chronologie</button>
+  </div>
 
   <div class="search">
     <input id="searchInput" type="text" placeholder="Rechercher..." />
@@ -135,19 +129,30 @@
 
   <section class="results" id="results"></section>
 
-  <footer>© Project Andoria</footer>
+  <section class="timeline" id="timeline"></section>
 
-  <script>
-    if(localStorage.getItem('rp_authed') !== '1'){
-      location.href = "index.html";
-    }
+  <footer>© Projet Andoria</footer>
 
+<script>
+if(localStorage.getItem('rp_authed') !== '1'){
+  location.href = "index.html";
+}
+
+// Pages principales du wiki
 const WIKI_PAGES = [
-  { title: "Andoria", category: "Pays", desc: "Andoria, centre impérial d’Eryndor, impose par magie.", url: "pays/andoria.html" },
-  { title: "Lumora", category: "Pays", desc: "Île fermée, théâtre du coup d’État de 854.", url: "pays/lumora.html" },
+  // Continents
+  { title: "Erydor", category: "Continent", desc: "Berceau impérial, cœur magique du monde connu.", url: "lieux/erydor.html" },
+  { title: "Ozyrelle", category: "Continent", desc: "Archipel mystique, isolé par des brumes éternelles.", url: "lieux/ozyrelle.html" },
+  { title: "Veymora", category: "Continent", desc: "Terres marécageuses, hantées par les anciens pactes.", url: "lieux/veymora.html" },
+  { title: "Tharvos", category: "Continent", desc: "Désert rouge, royaume des nomades et des reliques.", url: "lieux/tharvos.html" },
+  { title: "Korvalis", category: "Continent", desc: "Montagnes glacées, bastion des clans oubliés.", url: "lieux/korvalis.html" },
+  { title: "Sylvarion", category: "Continent", desc: "Forêts vivantes, sanctuaire des esprits sylvestres.", url: "lieux/sylvarion.html" },
+  { title: "Dravenor", category: "Continent", desc: "Terres corrompues, dominées par les factions obscures.", url: "lieux/dravenor.html" },
 
+  // Factions
   { title: "Ordre du Silence", category: "Factions", desc: "Mages sans nom, l’Ordre du Silence efface sans bruit.", url: "factions/ordre-du-silence.html" },
 
+  // Personnages
   { title: "Yuki Akanee", category: "Personnages", desc: "Yuki, en exil, cherche sa sœur après un coup d'État.", url: "personnages/yuki-akanee.html" },
   { title: "Yuna Akanee", category: "Personnages", desc: "Sœur jumelle de Yuki, recherchée activement.", url: "personnages/yuna-akanee.html" },
   { title: "Yuta Akanee", category: "Personnages", desc: "Frère aîné, manipulé par Kuroda, devenu assassin.", url: "personnages/yuta-akanee.html" },
@@ -157,68 +162,134 @@ const WIKI_PAGES = [
   { title: "Ezekiel Noctharis", category: "Personnages", desc: "Forgeron mystique, mentor de Yuki dans la forêt.", url: "personnages/ezekiel-noctharis.html" },
   { title: "Iris Veyra", category: "Personnages", desc: "Compagne de Yuki, mère de Caleb, vit à Brumeval.", url: "personnages/iris-veyra.html" },
   { title: "Caleb Akanee", category: "Personnages", desc: "Fils de Yuki et Iris, né en 861.", url: "personnages/caleb-akanee.html" },
+
+  // Territoires
   { title: "Brumeval", category: "Territoires", desc: "Village paisible où Yuki fonde sa famille.", url: "territoires/brumeval.html" },
-  { title: "Forêt des Brises-Claires", category: "Territoires", desc: "Refuge d’Ezekiel, lieu d’entraînement de Yuki.", url: "territoires/brises-claires.html" },
-  { title: "Coup d’État de Lumora", category: "Archives", desc: "[Événement] Renversement de Takeshi Nahoru en 854.", url: "archives/coup-etat-lumora.html" },
-  { title: "Fuite des Akanee", category: "Archives", desc: "[Événement] Aya tente de fuir Lumora avec Yuki et Yuna.", url: "archives/fuite-akanee.html" },
-  { title: "Mort de Aya Akanee", category: "Archives", desc: "[Événement] Tuée par Yuta lors de l’exil.", url: "archives/mort-aya.html" },
-  { title: "Rencontre avec Ezekiel", category: "Archives", desc: "[Événement] Yuki est recueilli et formé dans la forêt.", url: "archives/rencontre-ezekiel.html" },
-  { title: "Mariage de Yuki", category: "Archives", desc: "[Événement] Union avec Iris Veyra à Brumeval.", url: "archives/mariage-yuki.html" },
-  { title: "Naissance de Caleb", category: "Archives", desc: "[Événement] Fils de Yuki et Iris, né en 861.", url: "archives/naissance-caleb.html" },
-  { title: "Attaque de Brumeval", category: "Archives", desc: "[Événement] Village attaqué, Yuki défend les habitants.", url: "archives/attaque-brumeval.html" }
+  { title: "Forêt des Brises-Claires", category: "Territoires", desc: "Refuge d’Ezekiel, lieu d’entraînement de Yuki.", url: "territoires/brises-claires.html" }
 ];
 
-    const resultsEl = document.getElementById('results');
-    const searchEl = document.getElementById('searchInput');
-    const filterButtons = document.querySelectorAll('.filters button');
+// Chronologie RP
+const timelineData = [
+  { date: "AN 0 — Création du Royaume Andorien", desc: "" },
+  { date: "8 juillet 827 — Naissance de Rolmir Dawnbringer", desc: "" },
+  { date: "21 avril 835 — Naissance de YUTA Akanee", desc: "" },
+  { date: "Été 839 — Rolmir commence à aider ses parents à La lanterne Dorée", desc: "" },
+  { date: "12 août 842 — Affrontement entre le hors-la-loi et Rolmir", desc: "" },
+  { date: "15 août 842 — Un chevalier propose à Rolmir d’être formé", desc: "" },
+  { date: "16 août 842 — Début de la formation de Rolmir", desc: "" },
+  { date: "31 décembre 842 — Naissance de YUKI et YUNA Akanee", desc: "" },
+  { date: "2 juillet 845 — Adoubement de Rolmir", desc: "" },
+  { date: "5 février 850 — Première rencontre de Rolmir et Darius", desc: "" },
+  { date: "8 octobre 853 — Révélation sur l’Ordre du Secret et affrontement entre Rolmir et Darius", desc: "" },
+  { date: "14 juillet 854 — Coup d’État à Lumora et mort de Takeshi Nahoru", desc: "" },
+  { date: "16 juillet 854 — Mort de Kenshi Akanee", desc: "" },
+  { date: "17 juillet 854 — Promotion de YUTA Akanee", desc: "" },
+  { date: "9 mai 855 — Fuite de la famille Akanee de Lumora", desc: "" },
+  { date: "10 mai 855 — Mort de Aya et séparation des jumeaux Akanee", desc: "" },
+  { date: "11 mai 855 — Rencontre de YUNA et Rolmir", desc: "" },
+  { date: "13 mai 855 — YUKI se réveille chez Ezekiel Noctharis et commence son entraînement", desc: "" },
+  { date: "14 juin 858 — Départ de YUNA de chez Rolmir", desc: "" },
+  { date: "18 avril 859 — Départ de YUKI de chez Ezekiel", desc: "" },
+  { date: "9 juillet 859 — YUKI rencontre Iris Vayra", desc: "" },
+  { date: "12 mars 860 — Mariage de YUKI et Iris", desc: "" },
+  { date: "15 janvier 861 — Naissance de Caleb Akanee", desc: "" },
+  { date: "17 février 861 — Attaque de Brumeval", desc: "" },
+  { date: "18 février 861 — Départ de YUKI pour retrouver sa sœur", desc: "" },
+  { date: "3 septembre 861 — Rencontre de YUKI et Rolmir", desc: "" }
+];
 
-    function renderResults(list){
-      resultsEl.innerHTML = "";
-      list.forEach(p=>{
-        const card = document.createElement('a');
-        card.href = p.url;
-        card.className = "card";
-        card.innerHTML = `<h3>${p.title}</h3><p>${p.category} — ${p.desc}</p>`;
-        resultsEl.appendChild(card);
-      });
-    }
+const resultsEl = document.getElementById('results');
+const searchEl = document.getElementById('searchInput');
+const filterButtons = document.querySelectorAll('.filters button');
+const timelineEl = document.getElementById('timeline');
+const chronoBtn = document.getElementById('toggleChrono');
 
-    function filterResults(query){
-      const q = query.toLowerCase();
-      const filtered = WIKI_PAGES.filter(p =>
-        p.title.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.desc.toLowerCase().includes(q)
-      );
+// Affiche les cartes
+function renderResults(list){
+  resultsEl.innerHTML = "";
+  list.forEach(p => {
+    const card = document.createElement('a');
+    card.href = p.url;
+    card.className = "card";
+    card.innerHTML = `<h3>${p.title}</h3><p>${p.category} — ${p.desc}</p>`;
+    resultsEl.appendChild(card);
+  });
+}
+
+// Filtrage par texte
+function filterResults(query){
+  const q = query.toLowerCase();
+  const filtered = WIKI_PAGES.filter(p =>
+    p.title.toLowerCase().includes(q) ||
+    p.category.toLowerCase().includes(q) ||
+    p.desc.toLowerCase().includes(q)
+  );
+  renderResults(filtered);
+}
+
+// Initialisation
+renderResults(WIKI_PAGES);
+
+// Recherche en direct
+searchEl.addEventListener('input', () => {
+  filterResults(searchEl.value);
+  clearActiveFilter();
+  timelineEl.style.display = "none";
+});
+
+// Filtres par catégorie
+filterButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const filter = btn.getAttribute('data-filter');
+    searchEl.value = "";
+    clearActiveFilter();
+    btn.classList.add('active');
+    timelineEl.style.display = "none";
+
+    if (filter === "All") {
+      renderResults(WIKI_PAGES);
+    } else if (filter === "Lieux") {
+      const filtered = WIKI_PAGES.filter(p => p.category === "Continent");
+      renderResults(filtered);
+    } else {
+      const filtered = WIKI_PAGES.filter(p => p.category === filter);
       renderResults(filtered);
     }
+  });
+});
 
-    renderResults(WIKI_PAGES);
+// Chronologie : affichage des dates RP
+chronoBtn.addEventListener('click', () => {
+  clearActiveFilter();
+  searchEl.value = "";
+  resultsEl.innerHTML = "";
+  chronoBtn.classList.add('active');
+  timelineEl.innerHTML = "";
+  timelineEl.style.display = "flex";
 
-    searchEl.addEventListener('input', () => {
-      filterResults(searchEl.value);
-      clearActiveFilter();
+  timelineData.forEach(item => {
+    const wrapper = document.createElement('div');
+    wrapper.className = "timeline-item";
+    wrapper.textContent = item.date;
+
+    const content = document.createElement('div');
+    content.className = "timeline-content";
+    content.textContent = item.event;
+
+    wrapper.addEventListener('click', () => {
+      content.style.display = content.style.display === "none" ? "block" : "none";
     });
 
-    // Tri par catégorie via les boutons
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const filter = btn.getAttribute('data-filter');
-        searchEl.value = "";
-        clearActiveFilter();
-        btn.classList.add('active');
-        if (filter === "All") {
-          renderResults(WIKI_PAGES);
-        } else {
-          const filtered = WIKI_PAGES.filter(p => p.category === filter);
-          renderResults(filtered);
-        }
-      });
-    });
+    timelineEl.appendChild(wrapper);
+    timelineEl.appendChild(content);
+  });
+});
 
-    function clearActiveFilter() {
-      filterButtons.forEach(b => b.classList.remove('active'));
-    }
-  </script>
+// Réinitialise les filtres actifs
+function clearActiveFilter() {
+  filterButtons.forEach(b => b.classList.remove('active'));
+  chronoBtn.classList.remove('active');
+}
+</script>
 </body>
 </html>
